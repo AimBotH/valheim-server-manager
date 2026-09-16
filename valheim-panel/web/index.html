@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Valheim 管理平台</title>
+  <link rel="stylesheet" href="/styles.css?v=go-dmp-4">
+</head>
+<body>
+  <div id="login-view" class="login-shell">
+    <section class="login-card">
+      <div class="login-brand">
+        <div class="brand-logo">V</div>
+        <div>
+          <p class="eyebrow">VIKING DEDICATED SERVER</p>
+          <h1>Valheim 管理平台</h1>
+        </div>
+      </div>
+      <p class="muted">统一管理专用服务器、BepInEx、Thunderstore 模组和世界存档。</p>
+      <form id="login-form" class="form-stack">
+        <label>
+          <span>用户名</span>
+          <input id="login-username" name="username" autocomplete="username" value="admin" required>
+        </label>
+        <label>
+          <span>密码</span>
+          <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="button primary wide" type="submit">登录控制台</button>
+      </form>
+      <p id="login-error" class="form-error" hidden></p>
+      <p class="login-foot">首次启动默认账号：<strong>admin</strong> / <strong>admin123</strong>，部署后请立即修改。</p>
+    </section>
+  </div>
+
+  <div id="app-view" class="app-shell" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo small">V</div>
+        <div>
+          <strong>Valheim</strong>
+          <span>管理平台</span>
+        </div>
+      </div>
+
+      <nav id="main-nav">
+        <button type="button" class="nav-item active" data-section="overview">
+          <span class="nav-icon">⌂</span><span>服务器总览</span><small>01</small>
+        </button>
+        <button type="button" class="nav-item" data-section="instances">
+          <span class="nav-icon">▦</span><span>控制面板</span><small>02</small>
+        </button>
+        <div class="nav-group-label">游戏设置</div>
+        <button type="button" class="nav-item" data-section="mods">
+          <span class="nav-icon">◇</span><span>模组管理</span><small>03</small>
+        </button>
+        <button type="button" class="nav-item" data-section="backups">
+          <span class="nav-icon">▣</span><span>存档管理</span><small>04</small>
+        </button>
+        <div class="nav-group-label">平台工具</div>
+        <button type="button" class="nav-item" data-section="logs">
+          <span class="nav-icon">≡</span><span>日志管理</span><small>05</small>
+        </button>
+        <button type="button" class="nav-item" data-section="settings">
+          <span class="nav-icon">⚙</span><span>平台管理</span><small>06</small>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div id="sidebar-user" class="user-chip">admin</div>
+        <button id="logout-button" type="button" class="button ghost small">退出</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <p id="page-eyebrow" class="eyebrow">VIKING SERVER / OVERVIEW</p>
+          <h1 id="page-title">服务器总览</h1>
+        </div>
+        <div class="topbar-meta">
+          <span id="current-instance-chip" class="top-chip purple">当前实例：未选择</span>
+          <span class="top-chip blue">后端：Go</span>
+          <span class="top-chip green">Steam App：896660</span>
+          <label class="instance-picker">
+            <select id="instance-picker" aria-label="当前实例"></select>
+          </label>
+          <button id="refresh-button" type="button" class="button ghost">刷新</button>
+          <button id="new-instance-button" type="button" class="button primary">＋ 新建实例</button>
+        </div>
+      </header>
+
+      <section id="section-overview" class="section-panel">
+        <div id="overview-metrics" class="metrics-grid"></div>
+        <div class="split-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">SERVER FLEET</p>
+                <h2>服务器实例</h2>
+              </div>
+            </div>
+            <div id="overview-instances" class="instance-list"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">QUICK CONTROL</p>
+                <h2>快捷操作</h2>
+              </div>
+            </div>
+            <div id="quick-actions" class="quick-actions"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="section-instances" class="section-panel" hidden>
+        <div class="section-toolbar">
+          <div>
+            <p class="eyebrow">CONTROL PLANE</p>
+            <h2>服务器实例</h2>
+          </div>
+          <button id="new-instance-button-2" type="button" class="button primary">＋ 新建实例</button>
+        </div>
+        <div id="instance-cards" class="instance-card-grid"></div>
+        <section id="instance-detail" class="detail-layout" hidden>
+          <div class="detail-head">
+            <div>
+              <p class="eyebrow">INSTANCE DASHBOARD</p>
+              <h2 id="detail-title">实例</h2>
+              <p id="detail-subtitle" class="muted"></p>
+            </div>
+            <div id="detail-actions" class="action-row"></div>
+          </div>
+          <div id="detail-tabs" class="tabs">
+            <button type="button" class="tab active" data-detail-tab="overview">控制面板</button>
+            <button type="button" class="tab" data-detail-tab="config">服务器设置</button>
+            <button type="button" class="tab" data-detail-tab="mods">模组设置</button>
+            <button type="button" class="tab" data-detail-tab="backups">存档备份</button>
+            <button type="button" class="tab" data-detail-tab="logs">运行日志</button>
+          </div>
+          <div id="detail-content"></div>
+        </section>
+      </section>
+
+      <section id="section-mods" class="section-panel" hidden>
+        <div class="section-toolbar">
+          <div>
+            <p class="eyebrow">BEPINEX / THUNDERSTORE</p>
+            <h2>模组管理</h2>
+          </div>
+          <div class="action-row">
+            <button id="install-bepinex-button" type="button" class="button secondary">安装 BepInEx</button>
+            <button id="upload-mod-button" type="button" class="button ghost">上传 ZIP</button>
+          </div>
+        </div>
+        <section class="panel recommendation-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">POPULAR PICKS</p>
+              <h2>热门模组推荐</h2>
+            </div>
+          </div>
+          <div id="recommended-mods" class="recommendations"></div>
+        </section>
+        <div class="mods-layout">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">THUNDERSTORE</p>
+                <h2>下载模组</h2>
+              </div>
+            </div>
+            <div class="search-row">
+              <input id="mod-search-input" type="search" placeholder="搜索模组名、作者或功能">
+              <button id="mod-search-button" type="button" class="button secondary">搜索</button>
+            </div>
+            <div id="mod-search-results" class="mod-results"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">INSTALLED MODS</p>
+                <h2>已配置模组</h2>
+              </div>
+            </div>
+            <div id="installed-mods" class="installed-mods"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="section-backups" class="section-panel" hidden>
+        <div class="section-toolbar">
+          <div>
+            <p class="eyebrow">WORLD SNAPSHOTS</p>
+            <h2>存档管理</h2>
+          </div>
+          <button id="create-backup-button" type="button" class="button primary">立即备份</button>
+        </div>
+        <div id="backup-list" class="backup-list"></div>
+      </section>
+
+      <section id="section-logs" class="section-panel" hidden>
+        <div class="section-toolbar">
+          <div>
+            <p class="eyebrow">RUNTIME OUTPUT</p>
+            <h2>日志管理</h2>
+          </div>
+          <div class="action-row">
+            <select id="log-lines">
+              <option value="120">120 行</option>
+              <option value="300" selected>300 行</option>
+              <option value="800">800 行</option>
+              <option value="2000">2000 行</option>
+            </select>
+            <button id="log-refresh-button" type="button" class="button ghost">刷新日志</button>
+          </div>
+        </div>
+        <section class="panel">
+          <div class="log-tabs">
+            <button type="button" class="tab active" data-log-tab="server">服务器日志</button>
+            <button type="button" class="tab" data-log-tab="steam">SteamCMD</button>
+          </div>
+          <pre id="log-output" class="log-output">暂无日志。</pre>
+        </section>
+      </section>
+
+      <section id="section-settings" class="section-panel" hidden>
+        <div class="section-toolbar">
+          <div>
+            <p class="eyebrow">PLATFORM SETTINGS</p>
+            <h2>平台管理</h2>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">STEAMCMD</p>
+                <h2>安装与运行环境</h2>
+              </div>
+            </div>
+            <form id="settings-form" class="form-grid">
+              <label><span>SteamCMD 路径</span><input name="steamcmdPath" placeholder="/opt/steamcmd/steamcmd.sh"></label>
+              <label><span>Steam App ID</span><input name="steamAppId" value="896660"></label>
+              <label><span>实例安装根目录</span><input name="installRoot" placeholder="默认为 data/instances"></label>
+              <label><span>Thunderstore 社区</span><input name="thunderstoreCommunity" value="valheim"></label>
+              <label><span>默认端口</span><input name="defaultPort" type="number" min="1024" max="65535"></label>
+              <label><span>默认最大玩家数</span><input name="defaultMaxPlayers" type="number" min="1" max="128"></label>
+              <label class="check-line"><input name="autoInstallBepInEx" type="checkbox"><span>安装模组前自动安装 BepInEx</span></label>
+              <label class="check-line"><input name="autoUpdateMods" type="checkbox"><span>启动前检查模组更新</span></label>
+              <div class="form-actions">
+                <button type="submit" class="button primary">保存设置</button>
+              </div>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">RUNTIME</p>
+                <h2>系统信息</h2>
+              </div>
+            </div>
+            <dl id="system-info" class="info-list"></dl>
+          </section>
+          <section class="panel steamcmd-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">STEAMCMD</p>
+                <h2>安装 SteamCMD</h2>
+              </div>
+              <button id="install-steamcmd-button" type="button" class="button secondary">安装 / 修复</button>
+            </div>
+            <div class="steamcmd-callout">
+              <strong id="steamcmd-state">未安装</strong>
+              <span id="steamcmd-path">尚未检测到 SteamCMD</span>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">ACCOUNT</p>
+                <h2>账户安全</h2>
+              </div>
+            </div>
+            <form id="password-form" class="form-grid">
+              <label><span>当前密码</span><input name="currentPassword" type="password" autocomplete="current-password" required></label>
+              <label><span>新密码</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+              <div class="form-actions">
+                <button type="submit" class="button primary">修改密码</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal-root" class="modal-root" hidden></div>
+  <div id="toast-root" class="toast-root"></div>
+  <input id="hidden-upload" type="file" accept=".zip,application/zip" hidden>
+  <script src="/app.js?v=go-dmp-4"></script>
+</body>
+</html>

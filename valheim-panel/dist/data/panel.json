@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-15T10:10:30Z",
+  "updatedAt": "2026-09-15T10:10:30Z",
+  "users": [
+    {
+      "id": "usr_758ab23cc31892db0dcf",
+      "username": "admin",
+      "role": "admin",
+      "password": {
+        "salt": "ee7e70d1d72b50994a1ebdc268a16208",
+        "hash": "313d6e3fe99eebc48f6370acc7d034a34ef2db795a5cd253360b9c711093bc99",
+        "iterations": 210000
+      },
+      "createdAt": "2026-09-15T10:10:30Z",
+      "updatedAt": "2026-09-15T10:10:30Z"
+    }
+  ],
+  "settings": {
+    "panelTitle": "Valheim 管理平台",
+    "panelSecret": "21a22246bbc5036d71f985e9343d7659c12a940a12144ec65b66f9fe329047eb",
+    "publicUrl": "",
+    "steamcmdPath": "",
+    "steamAppId": "896660",
+    "installRoot": "",
+    "thunderstoreCommunity": "valheim",
+    "defaultMaxPlayers": 10,
+    "defaultPort": 2456,
+    "autoInstallBepInEx": true,
+    "autoUpdateMods": false,
+    "backupBeforeUpdate": true
+  },
+  "instances": []
+}
